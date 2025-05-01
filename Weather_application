@@ -177,3 +177,38 @@ button:hover {
 .hidden {
     display: none;
 }
+
+
+WeatherController.java
+
+@RestController
+public class WeatherController {
+
+    @GetMapping("/weather")
+    public String getWeather(@RequestParam String city) {
+        String apiKey = "YOUR_API_KEY";
+        String apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" 
+                        + city + "&appid=" + apiKey + "&units=metric";
+
+        try {
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(conn.getInputStream())
+            );
+            String line;
+            StringBuilder result = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                result.append(line);
+            }
+            reader.close();
+
+            return result.toString(); // JSON returned to frontend
+        } catch (Exception e) {
+            return "{\"error\":\"Could not fetch weather.\"}";
+        }
+    }
+}
+
